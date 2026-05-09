@@ -1,0 +1,1405 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>能量精力日记工具</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⚡ 能量精力日记</h1>
+            <p>记录每一天，追踪你的能量波动</p>
+        </header>
+
+        <nav class="tabs">
+            <button class="tab-btn active" data-tab="input">数据录入</button>
+            <button class="tab-btn" data-tab="report">报表分析</button>
+            <button class="tab-btn" data-tab="vitality">元气值兑换</button>
+            <button class="tab-btn" data-tab="settings">设置</button>
+        </nav>
+
+        <!-- 数据录入面板 -->
+        <div id="input" class="tab-content active">
+            <div class="input-section">
+                <h2>📅 今日记录</h2>
+                <div class="date-selector">
+                    <input type="date" id="recordDate" value="">
+                    <div id="weatherDisplay" class="weather-display">
+                        <span class="weather-icon">🌤️</span>
+                        <span class="weather-text">获取天气中...</span>
+                    </div>
+                </div>
+
+                <!-- 睡眠记录 -->
+                <div class="category-card">
+                    <h3>😴 睡眠</h3>
+                    <div class="sleep-input">
+                        <div class="sleep-time-inputs">
+                            <div class="time-input">
+                                <label>🌙 入睡时间</label>
+                                <input type="time" id="sleepTime" value="23:00">
+                            </div>
+                            <div class="time-input">
+                                <label>☀️ 起床时间</label>
+                                <input type="time" id="wakeTime" value="07:00">
+                            </div>
+                            <div class="sleep-duration">
+                                <label>💤 睡眠时长</label>
+                                <span id="sleepDuration">8.0 小时</span>
+                                <input type="hidden" id="sleepHours" value="8">
+                            </div>
+                        </div>
+                        <select id="sleepQuality">
+                            <option value="0">未记录</option>
+                            <option value="-20">非常差（-20分）</option>
+                            <option value="-10">较差（-10分）</option>
+                            <option value="0">一般（0分）</option>
+                            <option value="15">良好（15分）</option>
+                            <option value="30">非常好（30分）</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- 身体状况 -->
+                <div class="category-card">
+                    <h3>❤️ 身体状况</h3>
+                    <div class="activity-input">
+                        <select id="health">
+                            <option value="0">未记录</option>
+                            <option value="20">精力充沛（20分）</option>
+                            <option value="10">状态良好（10分）</option>
+                            <option value="5">一般（5分）</option>
+                            <option value="-10">疲劳（-10分）</option>
+                            <option value="-15">不舒服（-15分）</option>
+                            <option value="-20">生病（-20分）</option>
+                        </select>
+                        <input type="text" id="healthDetail" placeholder="身体状况详情（可选）">
+                    </div>
+                </div>
+
+                <!-- 三餐记录 -->
+                <div class="category-card">
+                    <h3>🍽️ 饮食记录（按饱腹感评分）</h3>
+                    <div class="meal-inputs">
+                        <div class="meal-item">
+                            <label>早餐</label>
+                            <select id="breakfast">
+                                <option value="0">未记录</option>
+                                <option value="1">5分饱（5分）</option>
+                                <option value="2">6分饱（8分）</option>
+                                <option value="3">7分饱（12分）</option>
+                                <option value="4">8分饱（15分）</option>
+                                <option value="5">9分饱（8分）</option>
+                                <option value="6">10分饱（-5分）</option>
+                                <option value="-1">未吃（-10分）</option>
+                                <option value="-2">不健康（-8分）</option>
+                            </select>
+                        </div>
+                        <div class="meal-item">
+                            <label>午餐</label>
+                            <select id="lunch">
+                                <option value="0">未记录</option>
+                                <option value="1">5分饱（5分）</option>
+                                <option value="2">6分饱（8分）</option>
+                                <option value="3">7分饱（12分）</option>
+                                <option value="4">8分饱（15分）</option>
+                                <option value="5">9分饱（8分）</option>
+                                <option value="6">10分饱（-5分）</option>
+                                <option value="-1">未吃（-10分）</option>
+                                <option value="-2">不健康（-8分）</option>
+                            </select>
+                        </div>
+                        <div class="meal-item">
+                            <label>晚餐</label>
+                            <select id="dinner">
+                                <option value="0">未记录</option>
+                                <option value="1">5分饱（5分）</option>
+                                <option value="2">6分饱（8分）</option>
+                                <option value="3">7分饱（12分）</option>
+                                <option value="4">8分饱（15分）</option>
+                                <option value="5">9分饱（8分）</option>
+                                <option value="6">10分饱（-5分）</option>
+                                <option value="-1">未吃（-10分）</option>
+                                <option value="-2">不健康（-8分）</option>
+                            </select>
+                        </div>
+                        <div class="meal-item snack-item">
+                            <label>零食</label>
+                            <div class="multi-select">
+                                <button class="multi-select-trigger" id="snackDropdown">
+                                    <span id="snackSelected">请选择零食</span>
+                                    <span class="multi-select-arrow">▼</span>
+                                </button>
+                            </div>
+                            <input type="hidden" id="snack" value="0">
+                            <input type="hidden" id="snackItems" value="">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 运动记录 -->
+                <div class="category-card">
+                    <h3>🏃 运动</h3>
+                    <div class="activity-input">
+                        <div class="multi-select">
+                            <button class="multi-select-trigger" id="exerciseDropdown">
+                                <span id="exerciseSelected">请选择运动</span>
+                                <span class="multi-select-arrow">▼</span>
+                            </button>
+                        </div>
+                        <input type="hidden" id="exercise" value="0">
+                        <input type="hidden" id="exerciseItems" value="">
+                    </div>
+                </div>
+
+                <!-- 家务记录 -->
+                <div class="category-card">
+                    <h3>🧹 家务</h3>
+                    <div class="activity-input">
+                        <div class="multi-select">
+                            <button class="multi-select-trigger" id="choreDropdown">
+                                <span id="choreSelected">请选择家务</span>
+                                <span class="multi-select-arrow">▼</span>
+                            </button>
+                        </div>
+                        <input type="hidden" id="chore" value="0">
+                        <input type="hidden" id="choreItems" value="">
+                    </div>
+                </div>
+
+                <!-- 心情记录 -->
+                <div class="category-card">
+                    <h3>😊 心情</h3>
+                    <div class="mood-input">
+                        <div class="mood-options">
+                            <button class="mood-btn" data-value="30">🤩 兴奋</button>
+                            <button class="mood-btn" data-value="20">😄 开心</button>
+                            <button class="mood-btn" data-value="10">🙂 愉快</button>
+                            <button class="mood-btn" data-value="0">😐 平静</button>
+                            <button class="mood-btn" data-value="-10">😔 一般</button>
+                            <button class="mood-btn" data-value="-20">😢 低落</button>
+                            <button class="mood-btn" data-value="-25">😰 焦虑</button>
+                            <button class="mood-btn" data-value="-30">😤 愤怒</button>
+                        </div>
+                        <input type="hidden" id="mood" value="0">
+                    </div>
+                </div>
+
+                <!-- 备注 -->
+                <div class="category-card">
+                    <h3>📝 备注</h3>
+                    <textarea id="notes" placeholder="记录今天的感受或其他事项..."></textarea>
+                </div>
+
+                <div class="button-group">
+                    <button id="cancelBtn" class="cancel-btn">取消</button>
+                    <button id="saveBtn" class="save-btn">保存</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 书签弹窗 -->
+        <div id="bookmarkModal" class="modal-overlay">
+            <div class="bookmark-container">
+                <div class="bookmark-content" id="bookmarkContent">
+                    <div class="bookmark-header">
+                        <span class="bookmark-date" id="bookmarkDate"></span>
+                        <button class="close-btn" id="closeBookmark">✕</button>
+                    </div>
+                    <div class="bookmark-body">
+                        <div class="bookmark-bg" id="bookmarkBg"></div>
+                        <div class="bookmark-text">
+                            <h3 id="bookmarkTitle">今日能量记录</h3>
+                            <div class="bookmark-stats" id="bookmarkStats"></div>
+                            <div class="bookmark-quote" id="bookmarkQuote"></div>
+                        </div>
+                    </div>
+                    <div class="bookmark-actions">
+                        <button class="action-btn" id="saveImageBtn">🖼️ 保存图片</button>
+                        <button class="action-btn" id="shareBtn">📤 分享</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 元气值面板 -->
+        <div id="vitality" class="tab-content">
+            <div class="vitality-section">
+                <h2>⚡ 生命元气值</h2>
+                
+                <div class="vitality-card">
+                    <div class="vitality-header">
+                        <span class="vitality-icon">💎</span>
+                        <span class="vitality-label">当前元气值</span>
+                    </div>
+                    <div class="vitality-display">
+                        <span class="vitality-value" id="vitalityValue">0</span>
+                        <span class="vitality-unit">点</span>
+                    </div>
+                    <div class="vitality-bar-container">
+                        <div class="vitality-bar">
+                            <div class="vitality-progress" id="vitalityProgress"></div>
+                        </div>
+                        <div class="vitality-milestones">
+                            <span>0</span>
+                            <span>1000</span>
+                            <span>2000</span>
+                            <span>3000</span>
+                            <span>4000</span>
+                            <span>5000</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="wish-wall">
+                    <div class="wish-wall-header">
+                        <h3>🌙 元气兑换阁</h3>
+                        <p class="wish-wall-subtitle">积攒生命能量，解锁专属治愈体验</p>
+                        <p class="wish-wall-desc">每一点元气，都是对自己的温柔投资</p>
+                        <div class="wish-wall-stats" id="wishWallStats">
+                            <div class="stat-badge">
+                                <span class="stat-icon">🌸</span>
+                                <span class="stat-text" id="unlockedCount">0</span>
+                                <span class="stat-label">已解锁</span>
+                            </div>
+                            <div class="stat-badge">
+                                <span class="stat-icon">✨</span>
+                                <span class="stat-text" id="claimedCount">0</span>
+                                <span class="stat-label">已兑换</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="wish-grid" id="wishGrid"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 报表分析面板 -->
+        <div id="report" class="tab-content">
+            <div class="report-section">
+                <h2>📊 能量报表分析</h2>
+                <div class="date-range">
+                    <select id="timeRange">
+                        <option value="">选择时间范围</option>
+                        <option value="week">过去一周</option>
+                        <option value="month">过去一个月</option>
+                        <option value="halfyear">过去半年</option>
+                        <option value="year">过去一年</option>
+                    </select>
+                    <input type="date" id="startDate">
+                    <span>至</span>
+                    <input type="date" id="endDate">
+                    <button id="generateReport">生成报表</button>
+                </div>
+
+                <!-- 能量概览 -->
+                <div class="summary-cards">
+                    <div class="summary-card">
+                        <div class="summary-value" id="avgEnergy">0</div>
+                        <div class="summary-label">平均能量值</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-value" id="maxEnergy">0</div>
+                        <div class="summary-label">最高能量值</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-value" id="minEnergy">0</div>
+                        <div class="summary-label">最低能量值</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-value" id="recordCount">0</div>
+                        <div class="summary-label">记录天数</div>
+                    </div>
+                    <div class="summary-card benchmark-card" id="benchmarkCard">
+                        <div class="summary-value" id="benchmarkDisplay">80</div>
+                        <div class="summary-label">
+                            参考能量值
+                        </div>
+                        <p class="benchmark-hint">点击设置每日能量目标</p>
+                        <div class="benchmark-edit" id="benchmarkEdit">
+                            <input type="number" id="benchmarkValue" placeholder="输入参考能量值" value="80">
+                            <div class="benchmark-edit-buttons">
+                                <button id="saveBenchmark">保存</button>
+                                <button id="cancelBenchmark">取消</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 能量解读 -->
+                <div class="analysis-section">
+                    <h3>🔍 能量解读</h3>
+                    <div class="analysis-card">
+                        <div id="energyAnalysis">
+                            <p id="energySummary">请先生成报表查看能量解读</p>
+                            <p id="trendAnalysis">请先生成报表查看趋势分析</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 能量趋势图表 -->
+                <div class="chart-container">
+                    <canvas id="energyChart"></canvas>
+                </div>
+
+                <!-- 分类统计 -->
+                <div class="category-stats">
+                    <div class="stats-header">
+                        <h3>📈 各维度平均得分</h3>
+                        <div class="compare-selector">
+                            <span class="compare-label">对比：</span>
+                            <select id="comparePeriod">
+                                <option value="lastWeek" selected>上周</option>
+                                <option value="lastMonth">上月</option>
+                                <option value="lastYear">去年同期</option>
+                                <option value="previous">上一期</option>
+                            </select>
+                            <span id="comparePeriodLabel" class="compare-label-date"></span>
+                        </div>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-icon">🍽️</span>
+                            <span class="stat-name">三餐</span>
+                            <span class="stat-value" id="avgMeal">0</span>
+                            <span class="stat-change" id="changeMeal"></span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-icon">🍪</span>
+                            <span class="stat-name">零食</span>
+                            <span class="stat-value" id="avgSnack">0</span>
+                            <span class="stat-change" id="changeSnack"></span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-icon">🏃</span>
+                            <span class="stat-name">运动</span>
+                            <span class="stat-value" id="avgExercise">0</span>
+                            <span class="stat-change" id="changeExercise"></span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-icon">😊</span>
+                            <span class="stat-name">心情</span>
+                            <span class="stat-value" id="avgMood">0</span>
+                            <span class="stat-change" id="changeMood"></span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-icon">😴</span>
+                            <span class="stat-name">睡眠</span>
+                            <span class="stat-value" id="avgSleep">0</span>
+                            <span class="stat-change" id="changeSleep"></span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-icon">🧹</span>
+                            <span class="stat-name">家务</span>
+                            <span class="stat-value" id="avgChore">0</span>
+                            <span class="stat-change" id="changeChore"></span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-icon">❤️</span>
+                            <span class="stat-name">身体</span>
+                            <span class="stat-value" id="avgHealth">0</span>
+                        </div>
+                    </div>
+                    <div class="dimension-radar">
+                        <h4>⚖️ 各因素影响权重</h4>
+                        <div class="radar-container">
+                            <canvas id="radarChart" width="280" height="280"></canvas>
+                        </div>
+                        <div class="radar-legend">
+                            <div class="legend-item"><span class="legend-color" style="background: #667eea;"></span>当前期</div>
+                            <div class="legend-item"><span class="legend-color" style="background: #f59e0b;"></span>对比期</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 对比分析 -->
+                <div class="comparison-section">
+                    <h3>🔄 对比分析</h3>
+                    <div class="comparison-tabs">
+                        <button class="comparison-tab active" data-tab="week">本周 vs 上周</button>
+                        <button class="comparison-tab" data-tab="exercise">运动日 vs 非运动日</button>
+                        <button class="comparison-tab" data-tab="weekday">工作日 vs 休息日</button>
+                    </div>
+                    <div class="comparison-content">
+                        <div id="weekComparison" class="comparison-panel active">
+                            <div class="comparison-grid">
+                                <div class="comparison-item">
+                                    <div class="comparison-label">本周平均能量</div>
+                                    <div class="comparison-value" id="thisWeekAvg">0</div>
+                                </div>
+                                <div class="comparison-item">
+                                    <div class="comparison-label">上周平均能量</div>
+                                    <div class="comparison-value" id="lastWeekAvg">0</div>
+                                </div>
+                                <div class="comparison-item">
+                                    <div class="comparison-label">变化</div>
+                                    <div class="comparison-value change" id="weekChange">0</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="exerciseComparison" class="comparison-panel">
+                            <div class="comparison-grid">
+                                <div class="comparison-item">
+                                    <div class="comparison-label">运动日平均能量</div>
+                                    <div class="comparison-value" id="exerciseDayAvg">0</div>
+                                </div>
+                                <div class="comparison-item">
+                                    <div class="comparison-label">非运动日平均能量</div>
+                                    <div class="comparison-value" id="noExerciseDayAvg">0</div>
+                                </div>
+                                <div class="comparison-item">
+                                    <div class="comparison-label">差异</div>
+                                    <div class="comparison-value change" id="exerciseDiff">0</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="weekdayComparison" class="comparison-panel">
+                            <div class="comparison-grid">
+                                <div class="comparison-item">
+                                    <div class="comparison-label">工作日平均能量</div>
+                                    <div class="comparison-value" id="weekdayAvg">0</div>
+                                </div>
+                                <div class="comparison-item">
+                                    <div class="comparison-label">休息日平均能量</div>
+                                    <div class="comparison-value" id="weekendAvg">0</div>
+                                </div>
+                                <div class="comparison-item">
+                                    <div class="comparison-label">差异</div>
+                                    <div class="comparison-value change" id="weekdayDiff">0</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 打卡记录报表 -->
+                <div class="checkin-report">
+                    <h3>✅ 打卡记录日历</h3>
+                    <div class="calendar-container">
+                        <div class="calendar-header">
+                            <button id="prevMonth" class="nav-btn">◀</button>
+                            <span id="calendarMonth">2024年1月</span>
+                            <button id="nextMonth" class="nav-btn">▶</button>
+                        </div>
+                        <div class="calendar-weekdays">
+                            <div class="weekday">日</div>
+                            <div class="weekday">一</div>
+                            <div class="weekday">二</div>
+                            <div class="weekday">三</div>
+                            <div class="weekday">四</div>
+                            <div class="weekday">五</div>
+                            <div class="weekday">六</div>
+                        </div>
+                        <div id="calendarDays" class="calendar-days"></div>
+                        <div class="calendar-legend">
+                            <div class="legend-item active" data-filter="all">
+                                <span class="legend-color all"></span>
+                                <span>全部</span>
+                            </div>
+                            <div class="legend-item" data-filter="exercise">
+                                <span class="legend-color exercise-only"></span>
+                                <span>运动</span>
+                            </div>
+                            <div class="legend-item" data-filter="chore">
+                                <span class="legend-color chore-only"></span>
+                                <span>家务</span>
+                            </div>
+                            <div class="legend-item" data-filter="nosnack">
+                                <span class="legend-color nosnack-only"></span>
+                                <span>不吃零食</span>
+                            </div>
+                        </div>
+                        <div class="checkin-summary">
+                            <div class="summary-item">
+                                <span class="summary-icon">🏃</span>
+                                <span class="summary-label">运动打卡</span>
+                                <span class="summary-value" id="exerciseDays">0</span>
+                                <span class="summary-rate" id="exerciseRate">0%</span>
+                            </div>
+                            <div class="summary-item time-stat" id="exerciseTimeStat" style="display: none;">
+                                <span class="summary-icon">⏱️</span>
+                                <span class="summary-label">运动时长</span>
+                                <span class="summary-value" id="exerciseTotalTime">0</span>
+                            </div>
+                            <div class="summary-item">
+                                <span class="summary-icon">🧹</span>
+                                <span class="summary-label">家务打卡</span>
+                                <span class="summary-value" id="choreDays">0</span>
+                                <span class="summary-rate" id="choreRate">0%</span>
+                            </div>
+                            <div class="summary-item time-stat" id="choreTimeStat" style="display: none;">
+                                <span class="summary-icon">⏱️</span>
+                                <span class="summary-label">家务时长</span>
+                                <span class="summary-value" id="choreTotalTime">0</span>
+                            </div>
+                            <div class="summary-item">
+                                <span class="summary-icon">🍪</span>
+                                <span class="summary-label">不吃零食</span>
+                                <span class="summary-value" id="noSnackDays">0</span>
+                                <span class="summary-rate" id="noSnackRate">0%</span>
+                            </div>
+                        </div>
+                        <div class="checkin-formula">
+                            <small>计算公式：打卡率 = (打卡天数 / 总记录天数) × 100%</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 历史记录面板 -->
+        <div id="history" class="tab-content">
+            <div class="history-section">
+                <h2>📋 历史记录</h2>
+                
+                <!-- 元气值统计卡片 -->
+                <div class="vitality-summary">
+                    <div class="summary-header">
+                        <h3>🌟 元气值变化统计</h3>
+                    </div>
+                    <div class="summary-stats">
+                        <div class="summary-item">
+                            <span class="summary-icon">📈</span>
+                            <span class="summary-value" id="totalEarned">0</span>
+                            <span class="summary-label">累计获得</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-icon">💸</span>
+                            <span class="summary-value" id="totalSpent">0</span>
+                            <span class="summary-label">累计消耗</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-icon">💰</span>
+                            <span class="summary-value" id="currentVitality">0</span>
+                            <span class="summary-label">当前余额</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 元气值变化记录 -->
+                <div class="vitality-history">
+                    <div class="vitality-header">
+                        <h3>📊 元气值变化记录</h3>
+                    </div>
+                    <div id="vitalityHistoryList" class="vitality-list">
+                        <p class="empty-message">暂无元气值变化记录</p>
+                    </div>
+                </div>
+                
+                <!-- 能量记录 -->
+                <div class="energy-history">
+                    <div class="energy-header">
+                        <h3>📊 每日能量记录</h3>
+                    </div>
+                    <div class="data-actions">
+                        <div class="export-section">
+                            <label>日期范围：</label>
+                            <input type="date" id="exportStartDate" class="date-input">
+                            <span>至</span>
+                            <input type="date" id="exportEndDate" class="date-input">
+                        </div>
+                        <div class="export-dropdown">
+                            <button id="exportButton" class="action-btn">📤 导出数据 ▼</button>
+                            <div id="exportMenu" class="export-menu">
+                                <button id="exportCSV" class="export-option">📊 导出CSV</button>
+                                <button id="exportJSON" class="export-option">📋 导出JSON</button>
+                            </div>
+                        </div>
+                        <button id="importData" class="action-btn">📥 导入数据</button>
+                        <input type="file" id="importFile" accept=".json" style="display: none;">
+                    </div>
+                    <div id="historyList" class="history-list">
+                        <p class="empty-message">暂无记录，请先添加数据</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 设置面板 -->
+        <div id="settings" class="tab-content">
+            <div class="settings-section">
+                <h2>⚙️ 设置</h2>
+                
+                <!-- 主题配色 -->
+                <div class="settings-card">
+                    <h3>🎨 主题配色</h3>
+                    <div class="settings-item">
+                        <p class="settings-description">选择你喜欢的界面配色风格</p>
+                        <div class="theme-switch">
+                            <button id="theme-default" class="theme-btn active" data-theme="default">🌸 法式</button>
+                            <button id="theme-song" class="theme-btn" data-theme="song">🎋 宋式</button>
+                            <button id="theme-forest" class="theme-btn" data-theme="forest">🌿 森系</button>
+                            <button id="theme-coffee" class="theme-btn" data-theme="coffee">🍰 奶油</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 历史记录 -->
+                <div class="settings-card">
+                    <h3>📋 历史记录</h3>
+                    <div class="settings-item">
+                        <p class="settings-description">查看和管理你的历史能量和元气值记录</p>
+                        <button id="goToHistoryBtn" class="nav-btn">📖 查看/导入/导出历史记录</button>
+                    </div>
+                </div>
+                
+                <!-- 更新日志与关于 -->
+                <div class="settings-card">
+                    <h3>📝 更新日志</h3>
+                    <div class="settings-item">
+                        <p class="settings-description">查看工具的更新记录和新功能</p>
+                        <button id="goToLogBtn" class="nav-btn">📖 查看更新日志</button>
+                        <div class="about-section">
+                            <p class="about-text">能量精力日记 - 记录每一天的能量变化，了解自己的身体状态</p>
+                            <p class="version-text">版本：1.0.0</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 数据管理 -->
+                <div class="settings-card">
+                    <h3>📊 数据管理</h3>
+                    <div class="settings-item">
+                        <p class="settings-description">清空所有历史数据，包括能量记录、参考能量值和书签。此操作不可撤销。</p>
+                        <button id="clearDataBtn" class="nav-btn" onclick="window.showClearDataConfirm()">🗑️ 清空所有数据</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 更新日志面板 -->
+        <div id="log" class="tab-content">
+            <div class="log-section">
+                <h2>📝 更新日志</h2>
+                <div id="logList" class="log-list">
+                    <p class="empty-message">暂无更新记录</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        <!-- 零食下拉框（放在页面最外层避免被遮挡） -->
+        <div class="multi-select-dropdown" id="snackDropdownContent">
+            <div class="dropdown-header">
+                <span>已选：</span>
+                <span id="dropdownSelectedCount">0</span>
+                <span>项，得分：</span>
+                <span id="dropdownScore">0</span>
+            </div>
+            <div class="dropdown-divider"></div>
+            <div class="dropdown-category">
+                <div class="category-header">最健康（+5分）</div>
+                <div class="dropdown-options-wrapper">
+                    <label class="dropdown-option">
+                        <input type="checkbox" class="snack-checkbox" data-score="5" data-name="水果">
+                        <span>🍎 水果</span>
+                    </label>
+                    <label class="dropdown-option">
+                        <input type="checkbox" class="snack-checkbox" data-score="5" data-name="酸奶">
+                        <span>🥛 酸奶</span>
+                    </label>
+                    <label class="dropdown-option">
+                        <input type="checkbox" class="snack-checkbox" data-score="5" data-name="坚果">
+                        <span>🥜 坚果</span>
+                    </label>
+                </div>
+            </div>
+            <div class="dropdown-category">
+                <div class="category-header">中等健康（+3分）</div>
+                <div class="dropdown-options-wrapper">
+                    <label class="dropdown-option">
+                        <input type="checkbox" class="snack-checkbox" data-score="3" data-name="肉脯">
+                        <span>🥩 肉脯</span>
+                    </label>
+                </div>
+            </div>
+            <div class="dropdown-category">
+                <div class="category-header">不太健康（-3分）</div>
+                <div class="dropdown-options-wrapper">
+                    <label class="dropdown-option">
+                        <input type="checkbox" class="snack-checkbox" data-score="-3" data-name="面包">
+                        <span>🍞 面包</span>
+                    </label>
+                    <label class="dropdown-option">
+                        <input type="checkbox" class="snack-checkbox" data-score="-3" data-name="饼干">
+                        <span>🍪 饼干</span>
+                    </label>
+                    <label class="dropdown-option">
+                        <input type="checkbox" class="snack-checkbox" data-score="-3" data-name="果汁">
+                        <span>🧃 果汁</span>
+                    </label>
+                </div>
+            </div>
+            <div class="dropdown-category">
+                <div class="category-header">高热量避雷（-5分）</div>
+                <div class="dropdown-options-wrapper">
+                    <label class="dropdown-option">
+                        <input type="checkbox" class="snack-checkbox" data-score="-5" data-name="蛋糕">
+                        <span>🎂 蛋糕</span>
+                    </label>
+                    <label class="dropdown-option">
+                        <input type="checkbox" class="snack-checkbox" data-score="-5" data-name="奶茶">
+                        <span>🧋 奶茶</span>
+                    </label>
+                    <label class="dropdown-option">
+                        <input type="checkbox" class="snack-checkbox" data-score="-5" data-name="巧克力">
+                        <span>🍫 巧克力</span>
+                    </label>
+                </div>
+            </div>
+            <div class="dropdown-footer">
+                <button class="clear-btn" id="clearSnackSelection">清除选择</button>
+            </div>
+        </div>
+
+        <!-- 家务下拉框（放在页面最外层避免被遮挡） -->
+        <div class="multi-select-dropdown" id="choreDropdownContent">
+            <div class="dropdown-header">
+                <span>已选：</span>
+                <span id="choreDropdownSelectedCount">0</span>
+                <span>项，得分：</span>
+                <span id="choreDropdownScore">0</span>
+            </div>
+            <div class="dropdown-divider"></div>
+            <div class="dropdown-category">
+                <div class="category-header">轻度家务（每项+10分）</div>
+                <div class="dropdown-options-wrapper">
+                    <label class="dropdown-option">
+                        <input type="checkbox" class="chore-checkbox" data-score="10" data-name="室内起居整理">
+                        <span>🛋️ 室内起居整理</span>
+                        <select class="chore-duration-select" style="display: none;">
+                            <option value="">时长</option>
+                            <option value="15">15分钟</option>
+                            <option value="30">30分钟</option>
+                            <option value="45">45分钟</option>
+                            <option value="60">1小时</option>
+                            <option value="90">1小时30分</option>
+                            <option value="120">2小时</option>
+                            <option value="121">2小时以上</option>
+                        </select>
+                    </label>
+                    <label class="dropdown-option">
+                        <input type="checkbox" class="chore-checkbox" data-score="10" data-name="室内日常除尘">
+                        <span>🧹 室内日常除尘</span>
+                        <select class="chore-duration-select" style="display: none;">
+                            <option value="">时长</option>
+                            <option value="15">15分钟</option>
+                            <option value="30">30分钟</option>
+                            <option value="45">45分钟</option>
+                            <option value="60">1小时</option>
+                            <option value="90">1小时30分</option>
+                            <option value="120">2小时</option>
+                            <option value="121">2小时以上</option>
+                        </select>
+                    </label>
+                    <label class="dropdown-option">
+                        <input type="checkbox" class="chore-checkbox" data-score="10" data-name="餐厨简易收拾">
+                        <span>🍽️ 餐厨简易收拾</span>
+                        <select class="chore-duration-select" style="display: none;">
+                            <option value="">时长</option>
+                            <option value="15">15分钟</option>
+                            <option value="30">30分钟</option>
+                            <option value="45">45分钟</option>
+                            <option value="60">1小时</option>
+                            <option value="90">1小时30分</option>
+                            <option value="120">2小时</option>
+                            <option value="121">2小时以上</option>
+                        </select>
+                    </label>
+                    <label class="dropdown-option">
+                        <input type="checkbox" class="chore-checkbox" data-score="10" data-name="花园日常管护">
+                        <span>🌿 花园日常管护</span>
+                        <select class="chore-duration-select" style="display: none;">
+                            <option value="">时长</option>
+                            <option value="15">15分钟</option>
+                            <option value="30">30分钟</option>
+                            <option value="45">45分钟</option>
+                            <option value="60">1小时</option>
+                            <option value="90">1小时30分</option>
+                            <option value="120">2小时</option>
+                            <option value="121">2小时以上</option>
+                        </select>
+                    </label>
+                    <label class="dropdown-option other-option">
+                        <input type="checkbox" class="chore-checkbox" data-score="10" data-name="其他" data-other="true">
+                        <span>📝 其他</span>
+                        <input type="text" class="other-input" placeholder="请输入..." style="display: none;">
+                        <select class="chore-duration-select" style="display: none;">
+                            <option value="">时长</option>
+                            <option value="15">15分钟</option>
+                            <option value="30">30分钟</option>
+                            <option value="45">45分钟</option>
+                            <option value="60">1小时</option>
+                            <option value="90">1小时30分</option>
+                            <option value="120">2小时</option>
+                            <option value="121">2小时以上</option>
+                        </select>
+                    </label>
+                </div>
+            </div>
+            <div class="dropdown-category">
+                <div class="category-header">中度家务（每项+20分）</div>
+                <div class="dropdown-options-wrapper">
+                    <label class="dropdown-option">
+                        <input type="checkbox" class="chore-checkbox" data-score="20" data-name="全屋精细保洁">
+                        <span>✨ 全屋精细保洁</span>
+                        <select class="chore-duration-select" style="display: none;">
+                            <option value="">时长</option>
+                            <option value="15">15分钟</option>
+                            <option value="30">30分钟</option>
+                            <option value="45">45分钟</option>
+                            <option value="60">1小时</option>
+                            <option value="90">1小时30分</option>
+                            <option value="120">2小时</option>
+                            <option value="121">2小时以上</option>
+                        </select>
+                    </label>
+                    <label class="dropdown-option">
+                        <input type="checkbox" class="chore-checkbox" data-score="20" data-name="厨卫常规清洁">
+                        <span>🚿 厨卫常规清洁</span>
+                        <select class="chore-duration-select" style="display: none;">
+                            <option value="">时长</option>
+                            <option value="15">15分钟</option>
+                            <option value="30">30分钟</option>
+                            <option value="45">45分钟</option>
+                            <option value="60">1小时</option>
+                            <option value="90">1小时30分</option>
+                            <option value="120">2小时</option>
+                            <option value="121">2小时以上</option>
+                        </select>
+                    </label>
+                    <label class="dropdown-option">
+                        <input type="checkbox" class="chore-checkbox" data-score="20" data-name="衣物床品洗护">
+                        <span>🧺 衣物床品洗护</span>
+                        <select class="chore-duration-select" style="display: none;">
+                            <option value="">时长</option>
+                            <option value="15">15分钟</option>
+                            <option value="30">30分钟</option>
+                            <option value="45">45分钟</option>
+                            <option value="60">1小时</option>
+                            <option value="90">1小时30分</option>
+                            <option value="120">2小时</option>
+                            <option value="121">2小时以上</option>
+                        </select>
+                    </label>
+                    <label class="dropdown-option">
+                        <input type="checkbox" class="chore-checkbox" data-score="20" data-name="庭院基础养护">
+                        <span>🏡 庭院基础养护</span>
+                        <select class="chore-duration-select" style="display: none;">
+                            <option value="">时长</option>
+                            <option value="15">15分钟</option>
+                            <option value="30">30分钟</option>
+                            <option value="45">45分钟</option>
+                            <option value="60">1小时</option>
+                            <option value="90">1小时30分</option>
+                            <option value="120">2小时</option>
+                            <option value="121">2小时以上</option>
+                        </select>
+                    </label>
+                    <label class="dropdown-option other-option">
+                        <input type="checkbox" class="chore-checkbox" data-score="20" data-name="其他" data-other="true">
+                        <span>📝 其他</span>
+                        <input type="text" class="other-input" placeholder="请输入..." style="display: none;">
+                        <select class="chore-duration-select" style="display: none;">
+                            <option value="">时长</option>
+                            <option value="15">15分钟</option>
+                            <option value="30">30分钟</option>
+                            <option value="45">45分钟</option>
+                            <option value="60">1小时</option>
+                            <option value="90">1小时30分</option>
+                            <option value="120">2小时</option>
+                            <option value="121">2小时以上</option>
+                        </select>
+                    </label>
+                </div>
+            </div>
+            <div class="dropdown-category">
+                <div class="category-header">重度家务（每项+30分）</div>
+                <div class="dropdown-options-wrapper">
+                    <label class="dropdown-option">
+                        <input type="checkbox" class="chore-checkbox" data-score="30" data-name="别墅全屋深洁">
+                        <span>🏠 别墅全屋深洁</span>
+                        <select class="chore-duration-select" style="display: none;">
+                            <option value="">时长</option>
+                            <option value="15">15分钟</option>
+                            <option value="30">30分钟</option>
+                            <option value="45">45分钟</option>
+                            <option value="60">1小时</option>
+                            <option value="90">1小时30分</option>
+                            <option value="120">2小时</option>
+                            <option value="121">2小时以上</option>
+                        </select>
+                    </label>
+                    <label class="dropdown-option">
+                        <input type="checkbox" class="chore-checkbox" data-score="30" data-name="厨卫顽固清污">
+                        <span>🧼 厨卫顽固清污</span>
+                        <select class="chore-duration-select" style="display: none;">
+                            <option value="">时长</option>
+                            <option value="15">15分钟</option>
+                            <option value="30">30分钟</option>
+                            <option value="45">45分钟</option>
+                            <option value="60">1小时</option>
+                            <option value="90">1小时30分</option>
+                            <option value="120">2小时</option>
+                            <option value="121">2小时以上</option>
+                        </select>
+                    </label>
+                    <label class="dropdown-option">
+                        <input type="checkbox" class="chore-checkbox" data-score="30" data-name="大家居拆洗养护">
+                        <span>🛋️ 大家居拆洗养护</span>
+                        <select class="chore-duration-select" style="display: none;">
+                            <option value="">时长</option>
+                            <option value="15">15分钟</option>
+                            <option value="30">30分钟</option>
+                            <option value="45">45分钟</option>
+                            <option value="60">1小时</option>
+                            <option value="90">1小时30分</option>
+                            <option value="120">2小时</option>
+                            <option value="121">2小时以上</option>
+                        </select>
+                    </label>
+                    <label class="dropdown-option">
+                        <input type="checkbox" class="chore-checkbox" data-score="30" data-name="园林庭院大修整">
+                        <span>🌳 园林庭院大修整</span>
+                        <select class="chore-duration-select" style="display: none;">
+                            <option value="">时长</option>
+                            <option value="15">15分钟</option>
+                            <option value="30">30分钟</option>
+                            <option value="45">45分钟</option>
+                            <option value="60">1小时</option>
+                            <option value="90">1小时30分</option>
+                            <option value="120">2小时</option>
+                            <option value="121">2小时以上</option>
+                        </select>
+                    </label>
+                    <label class="dropdown-option other-option">
+                        <input type="checkbox" class="chore-checkbox" data-score="30" data-name="其他" data-other="true">
+                        <span>📝 其他</span>
+                        <input type="text" class="other-input" placeholder="请输入..." style="display: none;">
+                        <select class="chore-duration-select" style="display: none;">
+                            <option value="">时长</option>
+                            <option value="15">15分钟</option>
+                            <option value="30">30分钟</option>
+                            <option value="45">45分钟</option>
+                            <option value="60">1小时</option>
+                            <option value="90">1小时30分</option>
+                            <option value="120">2小时</option>
+                            <option value="121">2小时以上</option>
+                        </select>
+                    </label>
+                </div>
+            </div>
+            <div class="dropdown-footer">
+                <button class="clear-btn" id="clearChoreSelection">清除选择</button>
+            </div>
+        </div>
+
+        <!-- 运动下拉框（放在页面最外层避免被遮挡） -->
+        <div class="multi-select-dropdown" id="exerciseDropdownContent">
+            <div class="dropdown-header">
+                <span>已选：</span>
+                <span id="exerciseDropdownSelectedCount">0</span>
+                <span>项，得分：</span>
+                <span id="exerciseDropdownScore">0</span>
+            </div>
+            <div class="dropdown-divider"></div>
+            <div class="dropdown-category">
+                <div class="category-header">轻度运动（+10分）</div>
+                <div class="dropdown-options-wrapper">
+                    <label class="dropdown-option">
+                        <input type="checkbox" class="exercise-checkbox" data-score="10" data-name="散步">
+                        <span>🚶 散步</span>
+                        <select class="exercise-duration-select" style="display: none;">
+                            <option value="">时长</option>
+                            <option value="15">15分钟</option>
+                            <option value="30">30分钟</option>
+                            <option value="45">45分钟</option>
+                            <option value="60">1小时</option>
+                            <option value="90">1小时30分</option>
+                            <option value="120">2小时</option>
+                            <option value="121">2小时以上</option>
+                        </select>
+                    </label>
+                    <label class="dropdown-option">
+                        <input type="checkbox" class="exercise-checkbox" data-score="10" data-name="拉伸">
+                        <span>🧘 拉伸</span>
+                        <select class="exercise-duration-select" style="display: none;">
+                            <option value="">时长</option>
+                            <option value="15">15分钟</option>
+                            <option value="30">30分钟</option>
+                            <option value="45">45分钟</option>
+                            <option value="60">1小时</option>
+                            <option value="90">1小时30分</option>
+                            <option value="120">2小时</option>
+                            <option value="121">2小时以上</option>
+                        </select>
+                    </label>
+                    <label class="dropdown-option">
+                        <input type="checkbox" class="exercise-checkbox" data-score="10" data-name="太极">
+                        <span>☯️ 太极</span>
+                        <select class="exercise-duration-select" style="display: none;">
+                            <option value="">时长</option>
+                            <option value="15">15分钟</option>
+                            <option value="30">30分钟</option>
+                            <option value="45">45分钟</option>
+                            <option value="60">1小时</option>
+                            <option value="90">1小时30分</option>
+                            <option value="120">2小时</option>
+                            <option value="121">2小时以上</option>
+                        </select>
+                    </label>
+                    <label class="dropdown-option">
+                        <input type="checkbox" class="exercise-checkbox" data-score="10" data-name="八段锦">
+                        <span>🧘‍♂️ 八段锦</span>
+                        <select class="exercise-duration-select" style="display: none;">
+                            <option value="">时长</option>
+                            <option value="15">15分钟</option>
+                            <option value="30">30分钟</option>
+                            <option value="45">45分钟</option>
+                            <option value="60">1小时</option>
+                            <option value="90">1小时30分</option>
+                            <option value="120">2小时</option>
+                            <option value="121">2小时以上</option>
+                        </select>
+                    </label>
+                    <label class="dropdown-option">
+                        <input type="checkbox" class="exercise-checkbox" data-score="10" data-name="其他" data-other="true">
+                        <span>📝 其他（请输入）</span>
+                        <input type="text" class="other-input" placeholder="请输入运动项目" style="display: none;">
+                        <select class="exercise-duration-select" style="display: none;">
+                            <option value="">时长</option>
+                            <option value="15">15分钟</option>
+                            <option value="30">30分钟</option>
+                            <option value="45">45分钟</option>
+                            <option value="60">1小时</option>
+                            <option value="90">1小时30分</option>
+                            <option value="120">2小时</option>
+                            <option value="121">2小时以上</option>
+                        </select>
+                    </label>
+                </div>
+            </div>
+            <div class="dropdown-category">
+                <div class="category-header">中度运动（+20分）</div>
+                <div class="dropdown-options-wrapper">
+                    <label class="dropdown-option">
+                        <input type="checkbox" class="exercise-checkbox" data-score="20" data-name="快走">
+                        <span>🏃 快走</span>
+                        <select class="exercise-duration-select" style="display: none;">
+                            <option value="">时长</option>
+                            <option value="15">15分钟</option>
+                            <option value="30">30分钟</option>
+                            <option value="45">45分钟</option>
+                            <option value="60">1小时</option>
+                            <option value="90">1小时30分</option>
+                            <option value="120">2小时</option>
+                            <option value="121">2小时以上</option>
+                        </select>
+                    </label>
+                    <label class="dropdown-option">
+                        <input type="checkbox" class="exercise-checkbox" data-score="20" data-name="瑜伽">
+                        <span>🧘‍♀️ 瑜伽</span>
+                        <select class="exercise-duration-select" style="display: none;">
+                            <option value="">时长</option>
+                            <option value="15">15分钟</option>
+                            <option value="30">30分钟</option>
+                            <option value="45">45分钟</option>
+                            <option value="60">1小时</option>
+                            <option value="90">1小时30分</option>
+                            <option value="120">2小时</option>
+                            <option value="121">2小时以上</option>
+                        </select>
+                    </label>
+                    <label class="dropdown-option">
+                        <input type="checkbox" class="exercise-checkbox" data-score="20" data-name="骑车">
+                        <span>🚴 骑车</span>
+                        <select class="exercise-duration-select" style="display: none;">
+                            <option value="">时长</option>
+                            <option value="15">15分钟</option>
+                            <option value="30">30分钟</option>
+                            <option value="45">45分钟</option>
+                            <option value="60">1小时</option>
+                            <option value="90">1小时30分</option>
+                            <option value="120">2小时</option>
+                            <option value="121">2小时以上</option>
+                        </select>
+                    </label>
+                    <label class="dropdown-option">
+                        <input type="checkbox" class="exercise-checkbox" data-score="20" data-name="普拉提">
+                        <span>🧘‍♀️ 普拉提</span>
+                        <select class="exercise-duration-select" style="display: none;">
+                            <option value="">时长</option>
+                            <option value="15">15分钟</option>
+                            <option value="30">30分钟</option>
+                            <option value="45">45分钟</option>
+                            <option value="60">1小时</option>
+                            <option value="90">1小时30分</option>
+                            <option value="120">2小时</option>
+                            <option value="121">2小时以上</option>
+                        </select>
+                    </label>
+                    <label class="dropdown-option">
+                        <input type="checkbox" class="exercise-checkbox" data-score="20" data-name="游泳">
+                        <span>🏊 游泳</span>
+                        <select class="exercise-duration-select" style="display: none;">
+                            <option value="">时长</option>
+                            <option value="15">15分钟</option>
+                            <option value="30">30分钟</option>
+                            <option value="45">45分钟</option>
+                            <option value="60">1小时</option>
+                            <option value="90">1小时30分</option>
+                            <option value="120">2小时</option>
+                            <option value="121">2小时以上</option>
+                        </select>
+                    </label>
+                    <label class="dropdown-option">
+                        <input type="checkbox" class="exercise-checkbox" data-score="20" data-name="羽毛球">
+                        <span>🏸 羽毛球</span>
+                        <select class="exercise-duration-select" style="display: none;">
+                            <option value="">时长</option>
+                            <option value="15">15分钟</option>
+                            <option value="30">30分钟</option>
+                            <option value="45">45分钟</option>
+                            <option value="60">1小时</option>
+                            <option value="90">1小时30分</option>
+                            <option value="120">2小时</option>
+                            <option value="121">2小时以上</option>
+                        </select>
+                    </label>
+                    <label class="dropdown-option">
+                        <input type="checkbox" class="exercise-checkbox" data-score="20" data-name="乒乓球">
+                        <span>🏓 乒乓球</span>
+                        <select class="exercise-duration-select" style="display: none;">
+                            <option value="">时长</option>
+                            <option value="15">15分钟</option>
+                            <option value="30">30分钟</option>
+                            <option value="45">45分钟</option>
+                            <option value="60">1小时</option>
+                            <option value="90">1小时30分</option>
+                            <option value="120">2小时</option>
+                            <option value="121">2小时以上</option>
+                        </select>
+                    </label>
+                    <label class="dropdown-option">
+                        <input type="checkbox" class="exercise-checkbox" data-score="20" data-name="其他" data-other="true">
+                        <span>📝 其他（请输入）</span>
+                        <input type="text" class="other-input" placeholder="请输入运动项目" style="display: none;">
+                        <select class="exercise-duration-select" style="display: none;">
+                            <option value="">时长</option>
+                            <option value="15">15分钟</option>
+                            <option value="30">30分钟</option>
+                            <option value="45">45分钟</option>
+                            <option value="60">1小时</option>
+                            <option value="90">1小时30分</option>
+                            <option value="120">2小时</option>
+                            <option value="121">2小时以上</option>
+                        </select>
+                    </label>
+                </div>
+            </div>
+            <div class="dropdown-category">
+                <div class="category-header">重度运动（+30分）</div>
+                <div class="dropdown-options-wrapper">
+                    <label class="dropdown-option">
+                        <input type="checkbox" class="exercise-checkbox" data-score="30" data-name="跑步">
+                        <span>🏃‍♂️ 跑步</span>
+                        <select class="exercise-duration-select" style="display: none;">
+                            <option value="">时长</option>
+                            <option value="15">15分钟</option>
+                            <option value="30">30分钟</option>
+                            <option value="45">45分钟</option>
+                            <option value="60">1小时</option>
+                            <option value="90">1小时30分</option>
+                            <option value="120">2小时</option>
+                            <option value="121">2小时以上</option>
+                        </select>
+                    </label>
+                    <label class="dropdown-option">
+                        <input type="checkbox" class="exercise-checkbox" data-score="30" data-name="力量训练">
+                        <span>💪 力量训练</span>
+                        <select class="exercise-duration-select" style="display: none;">
+                            <option value="">时长</option>
+                            <option value="15">15分钟</option>
+                            <option value="30">30分钟</option>
+                            <option value="45">45分钟</option>
+                            <option value="60">1小时</option>
+                            <option value="90">1小时30分</option>
+                            <option value="120">2小时</option>
+                            <option value="121">2小时以上</option>
+                        </select>
+                    </label>
+                    <label class="dropdown-option">
+                        <input type="checkbox" class="exercise-checkbox" data-score="30" data-name="HIIT">
+                        <span>🔥 HIIT</span>
+                        <select class="exercise-duration-select" style="display: none;">
+                            <option value="">时长</option>
+                            <option value="15">15分钟</option>
+                            <option value="30">30分钟</option>
+                            <option value="45">45分钟</option>
+                            <option value="60">1小时</option>
+                            <option value="90">1小时30分</option>
+                            <option value="120">2小时</option>
+                            <option value="121">2小时以上</option>
+                        </select>
+                    </label>
+                    <label class="dropdown-option">
+                        <input type="checkbox" class="exercise-checkbox" data-score="30" data-name="BodyCombat">
+                        <span>🥊 BodyCombat</span>
+                        <select class="exercise-duration-select" style="display: none;">
+                            <option value="">时长</option>
+                            <option value="15">15分钟</option>
+                            <option value="30">30分钟</option>
+                            <option value="45">45分钟</option>
+                            <option value="60">1小时</option>
+                            <option value="90">1小时30分</option>
+                            <option value="120">2小时</option>
+                            <option value="121">2小时以上</option>
+                        </select>
+                    </label>
+                    <label class="dropdown-option">
+                        <input type="checkbox" class="exercise-checkbox" data-score="30" data-name="篮球">
+                        <span>🏀 篮球</span>
+                        <select class="exercise-duration-select" style="display: none;">
+                            <option value="">时长</option>
+                            <option value="15">15分钟</option>
+                            <option value="30">30分钟</option>
+                            <option value="45">45分钟</option>
+                            <option value="60">1小时</option>
+                            <option value="90">1小时30分</option>
+                            <option value="120">2小时</option>
+                            <option value="121">2小时以上</option>
+                        </select>
+                    </label>
+                    <label class="dropdown-option">
+                        <input type="checkbox" class="exercise-checkbox" data-score="30" data-name="足球">
+                        <span>⚽ 足球</span>
+                        <select class="exercise-duration-select" style="display: none;">
+                            <option value="">时长</option>
+                            <option value="15">15分钟</option>
+                            <option value="30">30分钟</option>
+                            <option value="45">45分钟</option>
+                            <option value="60">1小时</option>
+                            <option value="90">1小时30分</option>
+                            <option value="120">2小时</option>
+                            <option value="121">2小时以上</option>
+                        </select>
+                    </label>
+                    <label class="dropdown-option">
+                        <input type="checkbox" class="exercise-checkbox" data-score="30" data-name="网球">
+                        <span>🎾 网球</span>
+                        <select class="exercise-duration-select" style="display: none;">
+                            <option value="">时长</option>
+                            <option value="15">15分钟</option>
+                            <option value="30">30分钟</option>
+                            <option value="45">45分钟</option>
+                            <option value="60">1小时</option>
+                            <option value="90">1小时30分</option>
+                            <option value="120">2小时</option>
+                            <option value="121">2小时以上</option>
+                        </select>
+                    </label>
+                    <label class="dropdown-option">
+                        <input type="checkbox" class="exercise-checkbox" data-score="30" data-name="跳绳">
+                        <span>🪀 跳绳</span>
+                        <select class="exercise-duration-select" style="display: none;">
+                            <option value="">时长</option>
+                            <option value="15">15分钟</option>
+                            <option value="30">30分钟</option>
+                            <option value="45">45分钟</option>
+                            <option value="60">1小时</option>
+                            <option value="90">1小时30分</option>
+                            <option value="120">2小时</option>
+                            <option value="121">2小时以上</option>
+                        </select>
+                    </label>
+                    <label class="dropdown-option">
+                        <input type="checkbox" class="exercise-checkbox" data-score="30" data-name="爬山">
+                        <span>⛰️ 爬山</span>
+                        <select class="exercise-duration-select" style="display: none;">
+                            <option value="">时长</option>
+                            <option value="15">15分钟</option>
+                            <option value="30">30分钟</option>
+                            <option value="45">45分钟</option>
+                            <option value="60">1小时</option>
+                            <option value="90">1小时30分</option>
+                            <option value="120">2小时</option>
+                            <option value="121">2小时以上</option>
+                        </select>
+                    </label>
+                    <label class="dropdown-option">
+                        <input type="checkbox" class="exercise-checkbox" data-score="30" data-name="其他" data-other="true">
+                        <span>📝 其他（请输入）</span>
+                        <input type="text" class="other-input" placeholder="请输入运动项目" style="display: none;">
+                        <select class="exercise-duration-select" style="display: none;">
+                            <option value="">时长</option>
+                            <option value="15">15分钟</option>
+                            <option value="30">30分钟</option>
+                            <option value="45">45分钟</option>
+                            <option value="60">1小时</option>
+                            <option value="90">1小时30分</option>
+                            <option value="120">2小时</option>
+                            <option value="121">2小时以上</option>
+                        </select>
+                    </label>
+                </div>
+            </div>
+            <div class="dropdown-category">
+                <div class="category-header">高强度运动（+45分）</div>
+                <div class="dropdown-options-wrapper">
+                    <label class="dropdown-option">
+                        <input type="checkbox" class="exercise-checkbox" data-score="45" data-name="专业训练">
+                        <span>🏋️ 专业训练</span>
+                        <select class="exercise-duration-select" style="display: none;">
+                            <option value="">时长</option>
+                            <option value="15">15分钟</option>
+                            <option value="30">30分钟</option>
+                            <option value="45">45分钟</option>
+                            <option value="60">1小时</option>
+                            <option value="90">1小时30分</option>
+                            <option value="120">2小时</option>
+                            <option value="121">2小时以上</option>
+                        </select>
+                    </label>
+                    <label class="dropdown-option">
+                        <input type="checkbox" class="exercise-checkbox" data-score="45" data-name="长时间运动">
+                        <span>⏰ 长时间运动</span>
+                        <select class="exercise-duration-select" style="display: none;">
+                            <option value="">时长</option>
+                            <option value="15">15分钟</option>
+                            <option value="30">30分钟</option>
+                            <option value="45">45分钟</option>
+                            <option value="60">1小时</option>
+                            <option value="90">1小时30分</option>
+                            <option value="120">2小时</option>
+                            <option value="121">2小时以上</option>
+                        </select>
+                    </label>
+                    <label class="dropdown-option">
+                        <input type="checkbox" class="exercise-checkbox" data-score="45" data-name="其他" data-other="true">
+                        <span>📝 其他（请输入）</span>
+                        <input type="text" class="other-input" placeholder="请输入运动项目" style="display: none;">
+                        <select class="exercise-duration-select" style="display: none;">
+                            <option value="">时长</option>
+                            <option value="15">15分钟</option>
+                            <option value="30">30分钟</option>
+                            <option value="45">45分钟</option>
+                            <option value="60">1小时</option>
+                            <option value="90">1小时30分</option>
+                            <option value="120">2小时</option>
+                            <option value="121">2小时以上</option>
+                        </select>
+                    </label>
+                </div>
+            </div>
+            <div class="dropdown-footer">
+                <button class="clear-btn" id="clearExerciseSelection">清除选择</button>
+            </div>
+        </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
