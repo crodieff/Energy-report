@@ -1,4 +1,5 @@
 {
   "buildCommand": "mkdir -p dist && cp index.html script.js styles.css dist/",
-  "outputDirectory": "dist"
+  "outputDirectory": "dist",
+  "framework": null
 }
