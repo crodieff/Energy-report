@@ -3,11 +3,7 @@
   "version": "1.4.2",
   "description": "能量精力日记 - 记录每一天，追踪你的能量波动",
   "main": "index.html",
-  "scripts": {
-    "build": "mkdir -p dist && cp index.html script.js styles.css dist/",
-    "clean": "rm -rf dist",
-    "preview": "python3 -m http.server 8000"
-  },
+  "scripts": {},
   "keywords": ["energy", "diary", "health", "tracking"],
   "author": "",
   "license": "MIT"
