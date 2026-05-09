@@ -351,14 +351,15 @@ header p {
 }
 
 /* 身体状况选择框箭头 */
-.activity-input {
+.health-select-wrapper {
     position: relative;
+    flex: 0 0 auto;
 }
 
-.activity-input::after {
+.health-select-wrapper::after {
     content: '▼';
     position: absolute;
-    right: 140px;
+    right: 12px;
     top: 50%;
     transform: translateY(-50%);
     font-size: 0.65rem;

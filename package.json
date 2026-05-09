@@ -1,6 +1,6 @@
 {
   "name": "energy-diary",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "description": "能量精力日记 - 记录每一天，追踪你的能量波动",
   "main": "index.html",
   "scripts": {
